@@ -73,7 +73,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="text" />
+                android:inputType="text"
+                tools:ignore="SpeakableTextPresentCheck"/>
         </com.google.android.material.textfield.TextInputLayout>
         <TextView
             android:id="@+id/emailTextView"
@@ -102,7 +103,7 @@
             android:alpha="0"
             tools:alpha="100">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.zaghy.storyapp.customview.EmailField
                 android:id="@+id/ed_register_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -72,7 +72,7 @@
             app:layout_constraintVertical_bias="0">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ed_description"
+                android:id="@+id/ed_add_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -95,7 +95,7 @@
             app:layout_constraintGuide_begin="332dp" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/button_add"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"

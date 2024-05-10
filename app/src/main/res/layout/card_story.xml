@@ -7,14 +7,14 @@
 
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/iv_item_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/gambar_story"
         tools:src="@drawable/ic_launcher_background"/>
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/tv_item_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
@@ -22,7 +22,7 @@
         tools:text="DICODING" />
 
     <TextView
-        android:id="@+id/description"
+        android:id="@+id/tv_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
