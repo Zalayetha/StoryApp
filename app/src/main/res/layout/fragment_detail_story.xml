@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".detailstory.view.DetailStory">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/gambar_story"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_launcher_background"/>
+
+
+        <TextView
+            android:id="@+id/titledetailstory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_background"
+            tools:text="Dicoding" />
+
+        <TextView
+            android:id="@+id/descriptionstory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titledetailstory"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet urna vitae erat blandit bibendum. Sed id neque condimentum, tristique enim malesuada, bibendum lorem. Aenean efficitur tellus odio, sit amet scelerisque neque commodo vitae. Ut sodales risus vitae dolor venenatis malesuada. Phasellus ultrices purus vel vulputate cursus. Fusce suscipit dapibus odio at facilisis. Fusce tempor urna tempor ipsum consequat ullamcorper. Aliquam erat volutpat. Cras elementum urna lorem, ullamcorper imperdiet lacus porta at. Integer erat felis, rutrum sit amet ultrices at, molestie nec lorem. Nam augue diam, suscipit eget justo nec, fringilla fermentum lectus. Morbi imperdiet porttitor tellus vitae hendrerit. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean at elit a ipsum auctor lacinia id ac sapien. Quisque aliquet diam eu ex venenatis viverra." />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

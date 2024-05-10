@@ -19,4 +19,9 @@
     <string name="text_btn_login">Masuk</string>
     <string name="text_btn_daftar">Daftar</string>
     <string name="gambar_story">Gambar Story</string>
+    <string name="foto_story">Foto Story</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="description">Description</string>
+    <string name="upload">Upload</string>
 </resources>

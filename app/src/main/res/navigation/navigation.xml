@@ -28,10 +28,32 @@
         android:id="@+id/register"
         android:name="com.zaghy.storyapp.auth.register.view.Register"
         android:label="fragment_register"
-        tools:layout="@layout/fragment_register" />
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_register_to_login"
+            app:destination="@id/login" />
+    </fragment>
     <fragment
         android:id="@+id/login"
         android:name="com.zaghy.storyapp.auth.login.view.Login"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_login_to_homepage"
+            app:destination="@id/homepage" />
+    </fragment>
+    <fragment
+        android:id="@+id/homepage"
+        android:name="com.zaghy.storyapp.home.view.Home"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homepage_to_detailStory"
+            app:destination="@id/detailStory" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailStory"
+        android:name="com.zaghy.storyapp.detailstory.view.DetailStory"
+        android:label="fragment_detail_story"
+        tools:layout="@layout/fragment_detail_story" />
 </navigation>

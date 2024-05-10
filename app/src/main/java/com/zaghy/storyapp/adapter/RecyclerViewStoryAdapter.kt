@@ -25,13 +25,13 @@ class RecyclerViewStoryAdapter<T>(
         holder.bind(item)
     }
 
-    inner class MyViewHolder(private val binding:CardStoryBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(data:T){
-            bindView(data,binding)
+    inner class MyViewHolder(private val binding:CardStoryBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: T) {
+            bindView(data, binding)
             binding.root.setOnClickListener {
                 onClick(data)
             }
 
+        }
     }
-
 }

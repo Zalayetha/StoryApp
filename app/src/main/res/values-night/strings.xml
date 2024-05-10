@@ -7,4 +7,6 @@
     <string name="lengkapi_data_dirimu_dibawah_ini_ya">Lengkapi data dirimu dibawah ini ya</string>
     <string name="selamat_datang_di_yu_story">Selamat Datang di Yu-Story</string>
     <string name="text_btn_daftar">Daftar</string>
+    <string name="description">Description</string>
+    <string name="upload">Upload</string>
 </resources>
