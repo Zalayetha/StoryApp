@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Story App</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="register">Daftar</string>
+    <string name="login">Masuk</string>
+    <string name="mau_berbagi_lifestyle_mu_dengan_orang_lain_di_yu_story_aja">Mau berbagi outfit mu dengan orang lain? Di Yu-Story aja!</string>
+    <string name="ilustrasi_orang_di_halaman_welcome">Ilustrasi orang di halaman welcome</string>
+    <string name="siapkan_outfit_kamu_sekarang">Siapkan Outfit kamu sekarang!</string>
+    <string name="selamat_datang">Selamat Datang Kembali!</string>
+    <string name="email">Email</string>
+    <string name="gambar_orang_di_halaman_login">Gambar orang di halaman login</string>
+    <string name="password">Password</string>
+    <string name="gambar_orang_di_halaman_register">Gambar orang di halaman register</string>
+    <string name="lengkapi_data_dirimu_dibawah_ini_ya">Lengkapi data dirimu dibawah ini ya</string>
+    <string name="nama">Nama</string>
+    <string name="daftar">Daftar</string>
+    <string name="selamat_datang_di_yu_story">Selamat Datang di Yu-Story</string>
+    <string name="text_btn_login">Masuk</string>
+    <string name="text_btn_daftar">Daftar</string>
+</resources>
