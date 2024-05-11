@@ -23,7 +23,7 @@ import com.zaghy.storyapp.home.viewmodel.HomeViewModelFactory
 import com.zaghy.storyapp.network.Result
 
 class Home : Fragment() {
-    private lateinit var  binding: FragmentHomeBinding
+    private lateinit var binding: FragmentHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -33,41 +33,41 @@ class Home : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(layoutInflater,container,false)
-        val viewModel:HomeViewModel by viewModels<HomeViewModel> {
+        binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
+        binding.storyRv.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        val viewModel: HomeViewModel by viewModels<HomeViewModel> {
             HomeViewModelFactory.getInstance(requireContext())
         }
-        viewModel.getStories().observe(viewLifecycleOwner){result->
-            when(result){
-                is Result.Loading->{
+        viewModel.getStories().observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    Log.d(TAG,"LOADING")
                     binding.progressBar.visibility = View.VISIBLE
                     binding.nodata.visibility = View.GONE
                 }
-                is Result.Success->{
+
+                is Result.Success -> {
+                    Log.d(TAG,"SUCCESS")
                     binding.progressBar.visibility = View.GONE
                     binding.nodata.visibility = View.GONE
 
                     setStories(result.data.listStory)
                 }
-                is Result.Error->{
+
+                is Result.Error -> {
+                    Log.d(TAG,"ERROR : ${result.error}")
                     binding.progressBar.visibility = View.GONE
                     binding.nodata.visibility = View.VISIBLE
                 }
-                null->{
+
+                null -> {
 //                    do nothing
                 }
             }
         }
-
-
-        binding.storyRv.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(requireContext())
-        }
-
-
-
-
         return binding.root
     }
 
@@ -78,24 +78,25 @@ class Home : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
-        super.onCreateOptionsMenu(menu,inflater)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_logout ->{
+        when (item.itemId) {
+            R.id.action_logout -> {
                 Log.e(TAG, "onOptionsItemSelected: Logout")
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setStories(story:List<ListStoryItem?>?){
-        if((story?.size ?: 0) > 0){
+    private fun setStories(story: List<ListStoryItem?>?) {
+
+        if ((story?.size ?: 0) > 0) {
             binding.storyRv.visibility = View.VISIBLE
             binding.nodata.visibility = View.GONE
             val adapter = RecyclerViewStoryAdapter<ListStoryItem>(
-                diffCallback = object :DiffUtil.ItemCallback<ListStoryItem>(){
+                diffCallback = object : DiffUtil.ItemCallback<ListStoryItem>() {
                     override fun areItemsTheSame(
                         oldItem: ListStoryItem,
                         newItem: ListStoryItem
@@ -111,12 +112,12 @@ class Home : Fragment() {
                     }
 
                 },
-                bindView = {item,binding->
+                bindView = { item, binding ->
                     Glide.with(binding.root).load(item.photoUrl).into(binding.ivItemPhoto)
                     binding.tvItemName.text = item.name
                     binding.tvDescription.text = item.description
                 },
-                onClick = {item->
+                onClick = { item ->
                     view?.findNavController()?.navigate(R.id.action_homepage_to_detailStory)
                 }
 

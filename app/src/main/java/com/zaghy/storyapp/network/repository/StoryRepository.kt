@@ -135,7 +135,6 @@ class StoryRepository private constructor(
 
 
     fun listStories(
-
         page: Int,
         size: Int,
         location: Int
