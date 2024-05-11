@@ -9,29 +9,23 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.zaghy.storyapp.R
+import com.zaghy.storyapp.adapter.RecyclerViewStoryAdapter
+import com.zaghy.storyapp.databinding.FragmentHomeBinding
+import com.zaghy.storyapp.home.model.ListStoryItem
+import com.zaghy.storyapp.home.viewmodel.HomeViewModel
+import com.zaghy.storyapp.home.viewmodel.HomeViewModelFactory
+import com.zaghy.storyapp.network.Result
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Home.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Home : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
+    private lateinit var  binding: FragmentHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -39,27 +33,45 @@ class Home : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        binding = FragmentHomeBinding.inflate(layoutInflater,container,false)
+        val viewModel:HomeViewModel by viewModels<HomeViewModel> {
+            HomeViewModelFactory.getInstance(requireContext())
+        }
+        viewModel.getStories().observe(viewLifecycleOwner){result->
+            when(result){
+                is Result.Loading->{
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.nodata.visibility = View.GONE
+                }
+                is Result.Success->{
+                    binding.progressBar.visibility = View.GONE
+                    binding.nodata.visibility = View.GONE
+
+                    setStories(result.data.listStory)
+                }
+                is Result.Error->{
+                    binding.progressBar.visibility = View.GONE
+                    binding.nodata.visibility = View.VISIBLE
+                }
+                null->{
+//                    do nothing
+                }
+            }
+        }
+
+
+        binding.storyRv.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+
+
+
+
+        return binding.root
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment home.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Home().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
 
         private const val TAG = "Home"
     }
@@ -76,5 +88,43 @@ class Home : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setStories(story:List<ListStoryItem?>?){
+        if((story?.size ?: 0) > 0){
+            binding.storyRv.visibility = View.VISIBLE
+            binding.nodata.visibility = View.GONE
+            val adapter = RecyclerViewStoryAdapter<ListStoryItem>(
+                diffCallback = object :DiffUtil.ItemCallback<ListStoryItem>(){
+                    override fun areItemsTheSame(
+                        oldItem: ListStoryItem,
+                        newItem: ListStoryItem
+                    ): Boolean {
+                        return oldItem == newItem
+                    }
+
+                    override fun areContentsTheSame(
+                        oldItem: ListStoryItem,
+                        newItem: ListStoryItem
+                    ): Boolean {
+                        return oldItem == newItem
+                    }
+
+                },
+                bindView = {item,binding->
+                    Glide.with(binding.root).load(item.photoUrl).into(binding.ivItemPhoto)
+                    binding.tvItemName.text = item.name
+                    binding.tvDescription.text = item.description
+                },
+                onClick = {item->
+                    view?.findNavController()?.navigate(R.id.action_homepage_to_detailStory)
+                }
+
+            )
+
+            adapter.submitList(story)
+            binding.storyRv.adapter = adapter
+        }
+
     }
 }

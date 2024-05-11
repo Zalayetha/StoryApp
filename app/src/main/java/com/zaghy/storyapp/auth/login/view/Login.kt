@@ -15,11 +15,12 @@ import com.zaghy.storyapp.R
 import com.zaghy.storyapp.auth.login.viewmodel.LoginViewModel
 import com.zaghy.storyapp.auth.login.viewmodel.LoginViewModelFactory
 import com.zaghy.storyapp.databinding.FragmentLoginBinding
+import com.zaghy.storyapp.local.datastore.Muser
 import com.zaghy.storyapp.network.Result
 
 class Login : Fragment() {
     private lateinit var binding: FragmentLoginBinding
-
+    private lateinit var token: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -41,7 +42,10 @@ class Login : Fragment() {
 
     private fun setupAction(viewModel: LoginViewModel) {
         binding.loginButton.setOnClickListener {
-            viewModel.login(binding.edLoginEmail.text.toString(), binding.edLoginPassword.text.toString())
+            viewModel.login(
+                binding.edLoginEmail.text.toString(),
+                binding.edLoginPassword.text.toString()
+            )
                 .observe(viewLifecycleOwner) { result ->
                     when (result) {
                         is Result.Loading -> {
@@ -50,8 +54,9 @@ class Login : Fragment() {
 
                         is Result.Success -> {
                             binding.progressBar.visibility = View.GONE
-                            viewModel.saveToken(result.data.loginResult?.token ?: "")
-                            view?.findNavController()?.navigate(R.id.action_login_to_homepage)
+                            result.data.loginResult?.let {
+                                viewModel.saveTokenAndNavigate(Muser(id = it.userId ?: "", name = it.name ?: "", token = it.token ?: ""))
+                            }
                         }
 
                         is Result.Error -> {
@@ -68,6 +73,12 @@ class Login : Fragment() {
                         }
                     }
                 }
+        }
+
+        viewModel.navigateToHomePage.observe(viewLifecycleOwner) { shouldNavigate ->
+            if (shouldNavigate) {
+                view?.findNavController()?.navigate(R.id.action_login_to_homepage)
+            }
         }
     }
 

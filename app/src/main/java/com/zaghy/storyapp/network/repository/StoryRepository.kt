@@ -11,6 +11,7 @@ import com.zaghy.storyapp.auth.login.model.MResponseLogin
 import com.zaghy.storyapp.auth.register.model.MResponseRegister
 import com.zaghy.storyapp.detailstory.model.MResponseDetailStory
 import com.zaghy.storyapp.home.model.MResponseListStories
+import com.zaghy.storyapp.local.datastore.Muser
 import com.zaghy.storyapp.local.datastore.PreferencesDataStore
 import com.zaghy.storyapp.network.Result
 import com.zaghy.storyapp.network.retrofit.ApiService
@@ -19,6 +20,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.HttpException
 import java.io.File
 
 class StoryRepository private constructor(
@@ -133,14 +135,14 @@ class StoryRepository private constructor(
 
 
     fun listStories(
-        token: String,
+
         page: Int,
         size: Int,
         location: Int
     ): LiveData<Result<MResponseListStories>?> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getStories(token, page, size, location)
+            val response = apiService.getStories( page, size, location)
             emit(Result.Success(response))
         } catch (e: Exception) {
             emit(Result.Error(e.message.toString()))
@@ -155,16 +157,16 @@ class StoryRepository private constructor(
         try {
             val response = apiService.getDetailStory(token, id)
             emit(Result.Success(response))
-        } catch (e: Exception) {
+        } catch (e: HttpException) {
             emit(Result.Error(e.message.toString()))
         }
     }
 
-    fun getToken(): LiveData<String> {
-        return pref.getToken().asLiveData()
+    fun getUser(): LiveData<Muser> {
+        return pref.getUser().asLiveData()
     }
 
-    suspend fun saveToken(token: String) {
-        pref.saveToken(token)
+     suspend fun saveUser(user: Muser) {
+        pref.saveUser(user)
     }
 }

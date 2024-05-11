@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_homepage_to_detailStory"
             app:destination="@id/detailStory" />
+        <action
+            android:id="@+id/action_homepage_to_login"
+            app:destination="@id/login" />
     </fragment>
     <fragment
         android:id="@+id/detailStory"
