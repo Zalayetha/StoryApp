@@ -3,35 +3,25 @@ package com.zaghy.storyapp.auth.login.view
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.zaghy.storyapp.R
+import com.zaghy.storyapp.auth.login.viewmodel.LoginViewModel
+import com.zaghy.storyapp.auth.login.viewmodel.LoginViewModelFactory
 import com.zaghy.storyapp.databinding.FragmentLoginBinding
+import com.zaghy.storyapp.network.Result
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Login.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Login : Fragment() {
-    private lateinit var  binding:FragmentLoginBinding
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -39,48 +29,82 @@ class Login : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentLoginBinding.inflate(layoutInflater,container,false)
-        setupAction()
+        binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
+//        setup viewmodel
+        val viewModel: LoginViewModel by viewModels<LoginViewModel> {
+            LoginViewModelFactory.getInstance(context = requireContext())
+        }
+        setupAction(viewModel)
         playAnimation()
         return binding.root
     }
 
-    private fun setupAction(){
+    private fun setupAction(viewModel: LoginViewModel) {
         binding.loginButton.setOnClickListener {
-            // TODO : LOGIN FUNCTION
+            viewModel.login(binding.edLoginEmail.text.toString(), binding.edLoginPassword.text.toString())
+                .observe(viewLifecycleOwner) { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+
+                        is Result.Success -> {
+                            binding.progressBar.visibility = View.GONE
+                            viewModel.saveToken(result.data.loginResult?.token ?: "")
+                            view?.findNavController()?.navigate(R.id.action_login_to_homepage)
+                        }
+
+                        is Result.Error -> {
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(
+                                requireContext(),
+                                "Terjadi kesalahan silakan cek kembali email address dan password anda.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        null -> {
+                            //do nothing
+                        }
+                    }
+                }
         }
     }
 
-    private fun playAnimation(){
-        ObjectAnimator.ofFloat(binding.imageViewLogin,View.TRANSLATION_X,-30f,30f).apply {
+    private fun playAnimation() {
+        ObjectAnimator.ofFloat(binding.imageViewLogin, View.TRANSLATION_X, -30f, 30f).apply {
             duration = 6000
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.REVERSE
         }.start()
 
-        val title = ObjectAnimator.ofFloat(binding.titleTextView,View.ALPHA,1f).setDuration(500)
-        val message = ObjectAnimator.ofFloat(binding.messageTextView,View.ALPHA,1f).setDuration(500)
-        val emailTextView = ObjectAnimator.ofFloat(binding.emailTextView,View.ALPHA,1f).setDuration(500)
-        val emailEditText = ObjectAnimator.ofFloat(binding.emailEditTextLayout,View.ALPHA,1f).setDuration(500)
-        val passwordTextView = ObjectAnimator.ofFloat(binding.passwordTextView,View.ALPHA,1f).setDuration(500)
-        val passwordEditText = ObjectAnimator.ofFloat(binding.passwordEditTextLayout,View.ALPHA,1f).setDuration(500)
-        val loginButton = ObjectAnimator.ofFloat(binding.loginButton,View.ALPHA,1f).setDuration(500)
+        val title = ObjectAnimator.ofFloat(binding.titleTextView, View.ALPHA, 1f).setDuration(500)
+        val message =
+            ObjectAnimator.ofFloat(binding.messageTextView, View.ALPHA, 1f).setDuration(500)
+        val emailTextView =
+            ObjectAnimator.ofFloat(binding.emailTextView, View.ALPHA, 1f).setDuration(500)
+        val emailEditText =
+            ObjectAnimator.ofFloat(binding.emailEditTextLayout, View.ALPHA, 1f).setDuration(500)
+        val passwordTextView =
+            ObjectAnimator.ofFloat(binding.passwordTextView, View.ALPHA, 1f).setDuration(500)
+        val passwordEditText =
+            ObjectAnimator.ofFloat(binding.passwordEditTextLayout, View.ALPHA, 1f).setDuration(500)
+        val loginButton =
+            ObjectAnimator.ofFloat(binding.loginButton, View.ALPHA, 1f).setDuration(500)
         AnimatorSet().apply {
-            playSequentially(title,message,emailTextView,emailEditText,passwordTextView,passwordEditText,loginButton)
+            playSequentially(
+                title,
+                message,
+                emailTextView,
+                emailEditText,
+                passwordTextView,
+                passwordEditText,
+                loginButton
+            )
         }.start()
     }
 
-
-
-
     companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Login().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        private const val TAG = "Login"
     }
 }

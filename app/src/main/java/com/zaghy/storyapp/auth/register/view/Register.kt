@@ -7,31 +7,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.zaghy.storyapp.R
+import com.zaghy.storyapp.auth.register.viewmodel.RegisterViewModel
+import com.zaghy.storyapp.auth.register.viewmodel.RegisterViewModelFactory
 import com.zaghy.storyapp.databinding.FragmentRegisterBinding
+import com.zaghy.storyapp.network.Result
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Register.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Register : Fragment() {
     private lateinit var binding:FragmentRegisterBinding
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
@@ -40,14 +30,46 @@ class Register : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentRegisterBinding.inflate(layoutInflater,container,false)
-        setupAction()
+        val viewModel: RegisterViewModel by viewModels<RegisterViewModel> {
+            RegisterViewModelFactory.getInstance(requireContext())
+        }
+        setupAction(viewModel)
         playAnimation()
         return binding.root
     }
 
-    private fun setupAction(){
+    private fun setupAction(viewModel: RegisterViewModel){
+//        Setup dialog
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        builder
+            .setMessage("Register Success")
+            .setTitle("Information")
+            .setPositiveButton("Ok"){dialog,_->
+                dialog.dismiss()
+
+            }
+        val dialog : AlertDialog = builder.create()
+
+//        setup register button
         binding.registerButton.setOnClickListener {
-//            TODO : REGISTER FUNCTION
+            viewModel.register(name = binding.edRegisterName.text.toString(), email = binding.edRegisterEmail.text.toString(), password = binding.edRegisterPassword.text.toString()).observe(viewLifecycleOwner){result->
+                when(result){
+                    is Result.Loading->{
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    is Result.Success->{
+                        binding.progressBar.visibility = View.GONE
+                        dialog.show()
+                        view?.findNavController()?.navigate(R.id.action_register_to_login)
+                    }
+                    is Result.Error->{
+                        binding.progressBar.visibility = View.GONE
+                    }
+                    null->{
+//                        do nothing
+                    }
+                }
+            }
         }
     }
 
@@ -72,22 +94,6 @@ class Register : Fragment() {
         }.start()
     }
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Register.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Register().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        private const val TAG = "Register"
     }
 }

@@ -24,9 +24,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         setupView()
-
-
-
     }
 
     private fun setupView(){
