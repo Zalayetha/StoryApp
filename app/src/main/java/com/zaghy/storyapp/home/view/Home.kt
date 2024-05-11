@@ -14,10 +14,12 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.zaghy.storyapp.R
 import com.zaghy.storyapp.adapter.RecyclerViewStoryAdapter
 import com.zaghy.storyapp.databinding.FragmentHomeBinding
 import com.zaghy.storyapp.home.model.ListStoryItem
+import com.zaghy.storyapp.home.view.HomeDirections.ActionHomepageToDetailStory
 import com.zaghy.storyapp.home.viewmodel.HomeViewModel
 import com.zaghy.storyapp.home.viewmodel.HomeViewModelFactory
 import com.zaghy.storyapp.network.Result
@@ -113,12 +115,15 @@ class Home : Fragment() {
 
                 },
                 bindView = { item, binding ->
-                    Glide.with(binding.root).load(item.photoUrl).into(binding.ivItemPhoto)
+                    Glide.with(binding.root)
+                        .load(item.photoUrl)
+                        .into(binding.ivItemPhoto)
                     binding.tvItemName.text = item.name
                     binding.tvDescription.text = item.description
                 },
                 onClick = { item ->
-                    view?.findNavController()?.navigate(R.id.action_homepage_to_detailStory)
+                    val toDetailStory = HomeDirections.actionHomepageToDetailStory(item.photoUrl, item.name, item.description)
+                    view?.findNavController()?.navigate(toDetailStory)
                 }
 
             )

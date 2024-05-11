@@ -7,8 +7,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.zaghy.storyapp.R
+import com.zaghy.storyapp.auth.welcome.viewmodel.WelcomeViewModel
+import com.zaghy.storyapp.auth.welcome.viewmodel.WelcomeViewModelFactory
 import com.zaghy.storyapp.databinding.FragmentWelcomeBinding
 
 class Welcome : Fragment() {
@@ -23,11 +26,20 @@ class Welcome : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentWelcomeBinding.inflate(inflater, container, false)
+        val viewModel:WelcomeViewModel by viewModels<WelcomeViewModel> {
+            WelcomeViewModelFactory.getInstance(requireContext())
+        }
 
+        viewModel.getUser().observe(viewLifecycleOwner){
+            if (it != null){
+                view?.findNavController()?.navigate(R.id.action_welcome_to_homepage)
+            }
+        }
 //        Setup Action of each button
         setupAction()
 //        Play the animation
         playAnimation()
+
 
         return binding.root
 

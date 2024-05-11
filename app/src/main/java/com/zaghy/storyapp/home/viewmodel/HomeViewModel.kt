@@ -10,6 +10,4 @@ class HomeViewModel(private val storyRepository: StoryRepository) : ViewModel() 
         size = 20,
         location = 0
     )
-
-
 }
