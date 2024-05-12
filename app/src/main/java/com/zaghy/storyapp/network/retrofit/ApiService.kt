@@ -44,7 +44,6 @@ interface ApiService {
     @Multipart
     @POST("stories")
     suspend fun addStories(
-        @Header("Authorization") token: String,
         @Part("description") description: RequestBody,
         @Part("photo") photo: MultipartBody.Part,
         @Part("lat") latitude: RequestBody,
@@ -70,7 +69,6 @@ interface ApiService {
 
     @GET("stories/{id}")
     suspend fun getDetailStory(
-        @Header("Authorization") token: String,
         @Path("id") id: String
     ): MResponseDetailStory
 

@@ -122,7 +122,7 @@ class Home : Fragment() {
                     binding.tvDescription.text = item.description
                 },
                 onClick = { item ->
-                    val toDetailStory = HomeDirections.actionHomepageToDetailStory(item.photoUrl, item.name, item.description)
+                    val toDetailStory = HomeDirections.actionHomepageToDetailStory(item.id)
                     view?.findNavController()?.navigate(toDetailStory)
                 }
 

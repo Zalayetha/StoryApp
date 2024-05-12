@@ -61,15 +61,7 @@
         android:label="fragment_detail_story"
         tools:layout="@layout/fragment_detail_story" >
         <argument
-            android:name="photo"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="title"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="description"
+            android:name="id"
             app:argType="string"
             app:nullable="true" />
     </fragment>

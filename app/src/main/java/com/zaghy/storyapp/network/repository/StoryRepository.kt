@@ -91,7 +91,6 @@ class StoryRepository private constructor(
                 requestImageFile
             )
             val response = apiService.addStories(
-                token = token,
                 description = requestBodyDescription,
                 photo = multipartBody,
                 latitude = requestBodyLatitude,
@@ -149,12 +148,11 @@ class StoryRepository private constructor(
     }
 
     fun detailStory(
-        token: String,
         id: String
     ): LiveData<Result<MResponseDetailStory>?> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getDetailStory(token, id)
+            val response = apiService.getDetailStory( id)
             emit(Result.Success(response))
         } catch (e: HttpException) {
             emit(Result.Error(e.message.toString()))
