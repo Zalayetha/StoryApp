@@ -76,16 +76,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textMultiLine"
-                android:hint="@string/description"
-                android:lines="10"
-                android:minLines="6"
                 android:gravity="top|start"
+                android:hint="@string/description"
+                android:inputType="textMultiLine"
+                android:lines="10"
                 android:maxLines="15"
-                android:scrollbars="vertical"/>
+                android:minLines="6"
+                android:scrollbars="vertical" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

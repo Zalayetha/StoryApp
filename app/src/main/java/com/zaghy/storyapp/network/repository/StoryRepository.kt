@@ -74,7 +74,6 @@ class StoryRepository private constructor(
     fun addStoryWithAuth(
         image: File,
         description: String,
-        token: String,
         latitude: Float,
         longitude: Float
     ): LiveData<Result<MResponseAddStory>?> = liveData {

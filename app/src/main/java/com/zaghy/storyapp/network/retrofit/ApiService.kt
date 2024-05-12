@@ -45,7 +45,7 @@ interface ApiService {
     @POST("stories")
     suspend fun addStories(
         @Part("description") description: RequestBody,
-        @Part("photo") photo: MultipartBody.Part,
+        @Part photo: MultipartBody.Part,
         @Part("lat") latitude: RequestBody,
         @Part("lon") longitude: RequestBody
     ): MResponseAddStory

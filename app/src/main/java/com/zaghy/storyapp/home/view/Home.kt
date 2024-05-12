@@ -43,6 +43,7 @@ class Home : Fragment() {
         val viewModel: HomeViewModel by viewModels<HomeViewModel> {
             HomeViewModelFactory.getInstance(requireContext())
         }
+        setupAction()
         viewModel.getStories().observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Loading -> {
@@ -71,6 +72,12 @@ class Home : Fragment() {
             }
         }
         return binding.root
+    }
+
+    private fun setupAction() {
+        binding.btnAddStory.setOnClickListener {
+            view?.findNavController()?.navigate(R.id.action_homepage_to_addStory)
+        }
     }
 
     companion object {
