@@ -15,6 +15,6 @@ object Injection {
             preferences.getUser().first()
         }
         val apiService = ApiConfig.getApiService(user.token)
-        return StoryRepository.getInstance(apiService,preferences)
+        return StoryRepository.getInstance(apiService, preferences)
     }
 }

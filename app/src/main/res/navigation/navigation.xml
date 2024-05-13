@@ -8,7 +8,7 @@
         android:id="@+id/welcome"
         android:name="com.zaghy.storyapp.auth.welcome.view.Welcome"
         android:label="fragment_welcome"
-        tools:layout="@layout/fragment_welcome" >
+        tools:layout="@layout/fragment_welcome">
         <action
             android:id="@+id/action_welcome_to_login"
             app:destination="@id/login" />
@@ -25,7 +25,7 @@
         android:id="@+id/register"
         android:name="com.zaghy.storyapp.auth.register.view.Register"
         android:label="fragment_register"
-        tools:layout="@layout/fragment_register" >
+        tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_register_to_login"
             app:destination="@id/login"
@@ -36,7 +36,7 @@
         android:id="@+id/login"
         android:name="com.zaghy.storyapp.auth.login.view.Login"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_login_to_homepage"
             app:destination="@id/homepage"
@@ -47,7 +47,7 @@
         android:id="@+id/homepage"
         android:name="com.zaghy.storyapp.home.view.Home"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homepage_to_detailStory"
             app:destination="@id/detailStory" />
@@ -62,7 +62,7 @@
         android:id="@+id/detailStory"
         android:name="com.zaghy.storyapp.detailstory.view.DetailStory"
         android:label="fragment_detail_story"
-        tools:layout="@layout/fragment_detail_story" >
+        tools:layout="@layout/fragment_detail_story">
         <argument
             android:name="id"
             app:argType="string"
@@ -72,5 +72,11 @@
         android:id="@+id/addStory"
         android:name="com.zaghy.storyapp.addstory.view.AddStory"
         android:label="fragment_add_story"
-        tools:layout="@layout/fragment_add_story" />
+        tools:layout="@layout/fragment_add_story">
+        <action
+            android:id="@+id/action_addStory_to_homepage"
+            app:destination="@id/homepage"
+            app:popUpTo="@id/navigation"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

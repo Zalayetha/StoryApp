@@ -3,12 +3,11 @@ package com.zaghy.storyapp.auth.login.view
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.zaghy.storyapp.R
@@ -17,18 +16,21 @@ import com.zaghy.storyapp.auth.login.viewmodel.LoginViewModelFactory
 import com.zaghy.storyapp.databinding.FragmentLoginBinding
 import com.zaghy.storyapp.local.datastore.Muser
 import com.zaghy.storyapp.network.Result
+import com.zaghy.storyapp.widget.CustomAlertDialog
 
 class Login : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private lateinit var token: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
 //        setup viewmodel
@@ -54,18 +56,21 @@ class Login : Fragment() {
 
                         is Result.Success -> {
                             binding.progressBar.visibility = View.GONE
+                            CustomAlertDialog("Information",result.data.message.toString(),"Ok").show(parentFragmentManager,"LOGIN DIALOG SUCCESS")
                             result.data.loginResult?.let {
-                                viewModel.saveTokenAndNavigate(Muser(id = it.userId ?: "", name = it.name ?: "", token = it.token ?: ""))
+                                viewModel.saveTokenAndNavigate(
+                                    Muser(
+                                        id = it.userId ?: "",
+                                        name = it.name ?: "",
+                                        token = it.token ?: ""
+                                    )
+                                )
                             }
                         }
 
                         is Result.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            Toast.makeText(
-                                requireContext(),
-                                "Terjadi kesalahan silakan cek kembali email address dan password anda.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            CustomAlertDialog("Information",result.error,"Ok").show(parentFragmentManager,"LOGIN DIALOG FAILED")
                         }
 
                         null -> {

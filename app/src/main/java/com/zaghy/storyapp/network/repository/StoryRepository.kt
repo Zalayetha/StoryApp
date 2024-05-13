@@ -1,21 +1,19 @@
 package com.zaghy.storyapp.network.repository
 
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
+import com.google.gson.Gson
 import com.zaghy.storyapp.addstory.model.MResponseAddStory
 import com.zaghy.storyapp.auth.login.model.MResponseLogin
 import com.zaghy.storyapp.auth.register.model.MResponseRegister
 import com.zaghy.storyapp.detailstory.model.MResponseDetailStory
+import com.zaghy.storyapp.error.ErrorResponse
 import com.zaghy.storyapp.home.model.MResponseListStories
 import com.zaghy.storyapp.local.datastore.Muser
 import com.zaghy.storyapp.local.datastore.PreferencesDataStore
 import com.zaghy.storyapp.network.Result
 import com.zaghy.storyapp.network.retrofit.ApiService
-import com.zaghy.storyapp.utils.Utilities
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -32,9 +30,9 @@ class StoryRepository private constructor(
         private var instance: StoryRepository? = null
         fun getInstance(
             apiService: ApiService,
-            pref:PreferencesDataStore
+            pref: PreferencesDataStore
         ): StoryRepository = instance ?: synchronized(this) {
-            instance ?: StoryRepository(apiService,pref).also {
+            instance ?: StoryRepository(apiService, pref).also {
                 instance = it
             }
         }
@@ -48,8 +46,11 @@ class StoryRepository private constructor(
             val response = apiService.login(email, password)
             emit(Result.Success(response))
 
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
+        } catch (e: HttpException) {
+            val response = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
+            val errorMessage = errorBody.message
+            emit(Result.Error(errorMessage.toString()))
         }
     }
 
@@ -64,8 +65,11 @@ class StoryRepository private constructor(
                 val response = apiService.register(name, email, password)
 
                 emit(Result.Success(response))
-            } catch (e: Exception) {
-                emit(Result.Error(e.message.toString()))
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
+                val errorMessage = errorBody.message
+                emit(Result.Error(errorMessage.toString()))
 
             }
         }
@@ -96,8 +100,11 @@ class StoryRepository private constructor(
                 longitude = requestBodyLongitude
             )
             emit(Result.Success(response))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
+        } catch (e: HttpException) {
+            val response = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
+            val errorMessage = errorBody.message
+            emit(Result.Error(errorMessage.toString()))
         }
     }
 
@@ -126,8 +133,11 @@ class StoryRepository private constructor(
                 longitude = requestBodyLongitude
             )
             emit(Result.Success(response))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
+        } catch (e: HttpException) {
+            val response = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
+            val errorMessage = errorBody.message
+            emit(Result.Error(errorMessage.toString()))
         }
     }
 
@@ -139,10 +149,13 @@ class StoryRepository private constructor(
     ): LiveData<Result<MResponseListStories>?> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getStories( page, size, location)
+            val response = apiService.getStories(page, size, location)
             emit(Result.Success(response))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
+        } catch (e: HttpException) {
+            val response = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
+            val errorMessage = errorBody.message
+            emit(Result.Error(errorMessage.toString()))
         }
     }
 
@@ -151,10 +164,13 @@ class StoryRepository private constructor(
     ): LiveData<Result<MResponseDetailStory>?> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getDetailStory( id)
+            val response = apiService.getDetailStory(id)
             emit(Result.Success(response))
         } catch (e: HttpException) {
-            emit(Result.Error(e.message.toString()))
+            val response = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
+            val errorMessage = errorBody.message
+            emit(Result.Error(errorMessage.toString()))
         }
     }
 
@@ -162,7 +178,7 @@ class StoryRepository private constructor(
         return pref.getUser().asLiveData()
     }
 
-     suspend fun saveUser(user: Muser) {
+    suspend fun saveUser(user: Muser) {
         pref.saveUser(user)
     }
 }

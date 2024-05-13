@@ -1,13 +1,11 @@
 package com.zaghy.storyapp.local.datastore
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.zaghy.storyapp.auth.login.model.LoginResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -22,7 +20,7 @@ class PreferencesDataStore private constructor(private val dataStore: DataStore<
 
     }
 
-//    private val TOKEN_KEY = stringPreferencesKey("token")
+    //    private val TOKEN_KEY = stringPreferencesKey("token")
     private inline val Preferences.id
         get() = this[Key.id] ?: ""
     private inline val Preferences.name
@@ -30,25 +28,9 @@ class PreferencesDataStore private constructor(private val dataStore: DataStore<
     private inline val Preferences.token
         get() = this[Key.token] ?: ""
 
-//    fun getToken(): Flow<String> {
-//        return dataStore.data.map { preferences ->
-//            preferences[TOKEN_KEY] ?: ""
-//        }
-//    }
-
-//    suspend fun saveToken(token: String) {
-//        Log.d("pref", "about to saveToken:")
-//        try {
-//            dataStore.edit { preferences ->
-//                preferences[TOKEN_KEY] = token
-//                Log.d("pref", "Token saved successfully")
-//            }
-//        } catch (e: Exception) {
-//            Log.d("pref", "Failed to save token: ${e.message}")
-//        }
-//    }
 
     fun getUser(): Flow<Muser> {
+
         return dataStore.data.map { preferences ->
             Muser(
                 preferences.id,

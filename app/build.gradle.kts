@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id ("androidx.navigation.safeargs")
+    id("androidx.navigation.safeargs")
 }
 
 android {
@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
         buildConfig = true
     }

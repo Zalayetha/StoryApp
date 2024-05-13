@@ -2,24 +2,23 @@ package com.zaghy.storyapp.home.view
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.zaghy.storyapp.R
 import com.zaghy.storyapp.adapter.RecyclerViewStoryAdapter
 import com.zaghy.storyapp.databinding.FragmentHomeBinding
 import com.zaghy.storyapp.home.model.ListStoryItem
-import com.zaghy.storyapp.home.view.HomeDirections.ActionHomepageToDetailStory
 import com.zaghy.storyapp.home.viewmodel.HomeViewModel
 import com.zaghy.storyapp.home.viewmodel.HomeViewModelFactory
 import com.zaghy.storyapp.network.Result
@@ -28,12 +27,14 @@ class Home : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         binding.storyRv.apply {
@@ -47,13 +48,13 @@ class Home : Fragment() {
         viewModel.getStories().observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Loading -> {
-                    Log.d(TAG,"LOADING")
+                    Log.d(TAG, "LOADING")
                     binding.progressBar.visibility = View.VISIBLE
                     binding.nodata.visibility = View.GONE
                 }
 
                 is Result.Success -> {
-                    Log.d(TAG,"SUCCESS")
+                    Log.d(TAG, "SUCCESS")
                     binding.progressBar.visibility = View.GONE
                     binding.nodata.visibility = View.GONE
 
@@ -61,7 +62,7 @@ class Home : Fragment() {
                 }
 
                 is Result.Error -> {
-                    Log.d(TAG,"ERROR : ${result.error}")
+                    Log.d(TAG, "ERROR : ${result.error}")
                     binding.progressBar.visibility = View.GONE
                     binding.nodata.visibility = View.VISIBLE
                 }
@@ -74,6 +75,19 @@ class Home : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
+        // Ensure that the parent activity is an AppCompatActivity
+        (activity as? AppCompatActivity)?.setSupportActionBar(binding.myToolbar)
+
+        // Optional: Set title
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Story App"
+
+    }
+
+
     private fun setupAction() {
         binding.btnAddStory.setOnClickListener {
             view?.findNavController()?.navigate(R.id.action_homepage_to_addStory)
@@ -84,19 +98,19 @@ class Home : Fragment() {
 
         private const val TAG = "Home"
     }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.action_logout -> {
-                Log.e(TAG, "onOptionsItemSelected: Logout")
+                // Handle settings action
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun setStories(story: List<ListStoryItem?>?) {

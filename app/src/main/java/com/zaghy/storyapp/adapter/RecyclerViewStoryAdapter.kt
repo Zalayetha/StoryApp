@@ -9,14 +9,14 @@ import com.zaghy.storyapp.databinding.CardStoryBinding
 
 class RecyclerViewStoryAdapter<T>(
     private val diffCallback: DiffUtil.ItemCallback<T>,
-    private val bindView:(T,CardStoryBinding)->Unit,
-    private val onClick:(T) -> Unit):ListAdapter<T,RecyclerViewStoryAdapter<T>.MyViewHolder>(diffCallback)
-{
+    private val bindView: (T, CardStoryBinding) -> Unit,
+    private val onClick: (T) -> Unit
+) : ListAdapter<T, RecyclerViewStoryAdapter<T>.MyViewHolder>(diffCallback) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): RecyclerViewStoryAdapter<T>.MyViewHolder {
-        val binding = CardStoryBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        val binding = CardStoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
@@ -25,7 +25,8 @@ class RecyclerViewStoryAdapter<T>(
         holder.bind(item)
     }
 
-    inner class MyViewHolder(private val binding:CardStoryBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class MyViewHolder(private val binding: CardStoryBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(data: T) {
             bindView(data, binding)
             binding.root.setOnClickListener {

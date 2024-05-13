@@ -23,10 +23,10 @@ class EmailField @JvmOverloads constructor(
         val expression = "^[\\w.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$"
         val pattern: Pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
         val matcher = text?.let { pattern.matcher(it) }
-        if(matcher?.matches() == true){
+        if (matcher?.matches() == true) {
             error = null
-        }else{
-            setError("Email tidak valid",null)
+        } else {
+            setError("Email tidak valid", null)
         }
         super.onTextChanged(text, start, lengthBefore, lengthAfter)
     }

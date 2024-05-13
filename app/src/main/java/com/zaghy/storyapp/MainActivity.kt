@@ -2,13 +2,15 @@ package com.zaghy.storyapp
 
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.zaghy.storyapp.R
 import com.zaghy.storyapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -24,12 +26,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 //        setupView()
+
     }
 
-    private fun setupView(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+
+    private fun setupView() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
-        }else{
+        } else {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN

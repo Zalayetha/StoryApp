@@ -1,12 +1,10 @@
-package com.zaghy.storyapp.addstory.model
+package com.zaghy.storyapp.error
 
 import com.google.gson.annotations.SerializedName
 
-data class MResponseAddStory(
-
+data class ErrorResponse(
     @field:SerializedName("error")
     val error: Boolean? = null,
-
     @field:SerializedName("message")
     val message: String? = null
 )

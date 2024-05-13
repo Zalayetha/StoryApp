@@ -3,10 +3,11 @@ package com.zaghy.storyapp.auth.welcome.view
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.zaghy.storyapp.R
@@ -16,6 +17,10 @@ import com.zaghy.storyapp.databinding.FragmentWelcomeBinding
 
 class Welcome : Fragment() {
     private lateinit var binding: FragmentWelcomeBinding
+
+    companion object{
+        private const val TAG = "Welcome"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -26,12 +31,13 @@ class Welcome : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentWelcomeBinding.inflate(inflater, container, false)
-        val viewModel:WelcomeViewModel by viewModels<WelcomeViewModel> {
+        val viewModel: WelcomeViewModel by viewModels<WelcomeViewModel> {
             WelcomeViewModelFactory.getInstance(requireContext())
         }
 
-        viewModel.getUser().observe(viewLifecycleOwner){
-            if (it != null){
+        viewModel.getUser().observe(viewLifecycleOwner) {
+            Log.d(TAG,it.toString())
+            if (it.id != "" && it.name != "" && it.token != "") {
                 view?.findNavController()?.navigate(R.id.action_welcome_to_homepage)
             }
         }
@@ -53,15 +59,16 @@ class Welcome : Fragment() {
         }.start()
 
         val login = ObjectAnimator.ofFloat(binding.loginPageBtn, View.ALPHA, 1f).setDuration(500)
-        val register = ObjectAnimator.ofFloat(binding.registerPageButton,View.ALPHA,1f).setDuration(500)
-        val title = ObjectAnimator.ofFloat(binding.titleswitch,View.ALPHA,1f).setDuration(500)
-        val subTitle = ObjectAnimator.ofFloat(binding.subTitle,View.ALPHA,1f).setDuration(500)
+        val register =
+            ObjectAnimator.ofFloat(binding.registerPageButton, View.ALPHA, 1f).setDuration(500)
+        val title = ObjectAnimator.ofFloat(binding.titleswitch, View.ALPHA, 1f).setDuration(500)
+        val subTitle = ObjectAnimator.ofFloat(binding.subTitle, View.ALPHA, 1f).setDuration(500)
 
         val together = AnimatorSet().apply {
-            playTogether(login,register)
+            playTogether(login, register)
         }
         AnimatorSet().apply {
-            playSequentially(title,subTitle,together)
+            playSequentially(title, subTitle, together)
             start()
         }
     }

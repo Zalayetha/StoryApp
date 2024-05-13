@@ -1,6 +1,5 @@
 package com.zaghy.storyapp.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.zaghy.storyapp.network.repository.StoryRepository
 
