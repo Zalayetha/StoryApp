@@ -52,11 +52,13 @@
             android:id="@+id/action_homepage_to_detailStory"
             app:destination="@id/detailStory" />
         <action
-            android:id="@+id/action_homepage_to_login"
-            app:destination="@id/login" />
-        <action
             android:id="@+id/action_homepage_to_addStory"
             app:destination="@id/addStory" />
+        <action
+            android:id="@+id/action_homepage_to_welcome"
+            app:destination="@id/welcome"
+            app:popUpTo="@id/navigation"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/detailStory"

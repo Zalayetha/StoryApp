@@ -65,13 +65,15 @@ class Register : Fragment() {
 
                     is Result.Success -> {
                         binding.progressBar.visibility = View.GONE
-                        CustomAlertDialog("Information",result.data.message.toString(),"Ok").show(parentFragmentManager,"REGISTER DIALOG SUCCESS")
+                        CustomAlertDialog("Information",result.data.message.toString(),"Ok",callback={}).show(parentFragmentManager,"REGISTER DIALOG SUCCESS")
                         view?.findNavController()?.navigate(R.id.action_register_to_login)
                     }
 
                     is Result.Error -> {
                         binding.progressBar.visibility = View.GONE
-                        CustomAlertDialog("Information",result.error,"Ok").show(parentFragmentManager,"REGISTER DIALOG FAILED")
+                        CustomAlertDialog("Information",result.error,"Ok",callback={
+
+                        }).show(parentFragmentManager,"REGISTER DIALOG FAILED")
                     }
 
                     null -> {

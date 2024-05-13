@@ -71,10 +71,12 @@ class AddStory : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
         binding = FragmentAddStoryBinding.inflate(layoutInflater, container, false)
         val viewModel: AddStoryViewModel by viewModels<AddStoryViewModel> {
             AddStoryViewModelFactory.getInstance(requireContext())
         }
+
         setupAction(viewModel)
         return binding.root
     }
@@ -105,29 +107,34 @@ class AddStory : Fragment() {
             val description = binding.edAddDescription.text.toString()
             val latitude = 0.toFloat()
             val longitude = 0.toFloat()
-            viewModel.addStory(imageFile, description, latitude, longitude)
-                .observe(viewLifecycleOwner) { result ->
-                    when (result) {
-                        is Result.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
+            viewModel.getUser().observe(viewLifecycleOwner) {
 
-                        is Result.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            showToast(result.data.message ?: "")
-                            view?.findNavController()?.navigate(R.id.action_addStory_to_homepage)
-                        }
+                viewModel.addStory(it.token, imageFile, description, latitude, longitude)
+                    .observe(viewLifecycleOwner) { result ->
+                        when (result) {
+                            is Result.Loading -> {
+                                binding.progressBar.visibility = View.VISIBLE
+                            }
 
-                        is Result.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            showToast(result.error)
-                        }
+                            is Result.Success -> {
+                                binding.progressBar.visibility = View.GONE
+                                showToast(result.data.message ?: "")
+                                view?.findNavController()
+                                    ?.navigate(R.id.action_addStory_to_homepage)
+                            }
 
-                        null -> {
+                            is Result.Error -> {
+                                binding.progressBar.visibility = View.GONE
+                                showToast(result.error)
+                            }
+
+                            null -> {
 //                        do nothing
+                            }
                         }
                     }
-                }
+            }
+
         }
     }
 

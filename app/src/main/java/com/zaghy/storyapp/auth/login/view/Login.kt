@@ -2,6 +2,7 @@ package com.zaghy.storyapp.auth.login.view
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -56,7 +57,6 @@ class Login : Fragment() {
 
                         is Result.Success -> {
                             binding.progressBar.visibility = View.GONE
-                            CustomAlertDialog("Information",result.data.message.toString(),"Ok").show(parentFragmentManager,"LOGIN DIALOG SUCCESS")
                             result.data.loginResult?.let {
                                 viewModel.saveTokenAndNavigate(
                                     Muser(
@@ -66,11 +66,17 @@ class Login : Fragment() {
                                     )
                                 )
                             }
+
                         }
 
                         is Result.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            CustomAlertDialog("Information",result.error,"Ok").show(parentFragmentManager,"LOGIN DIALOG FAILED")
+                            CustomAlertDialog("Information", result.error, "Ok", callback = {
+
+                            }).show(
+                                parentFragmentManager,
+                                "LOGIN DIALOG FAILED"
+                            )
                         }
 
                         null -> {

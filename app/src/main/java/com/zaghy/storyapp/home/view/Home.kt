@@ -1,5 +1,6 @@
 package com.zaghy.storyapp.home.view
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,9 +23,13 @@ import com.zaghy.storyapp.home.model.ListStoryItem
 import com.zaghy.storyapp.home.viewmodel.HomeViewModel
 import com.zaghy.storyapp.home.viewmodel.HomeViewModelFactory
 import com.zaghy.storyapp.network.Result
+import com.zaghy.storyapp.widget.CustomAlertDialog
 
 class Home : Fragment() {
     private lateinit var binding: FragmentHomeBinding
+    private val viewModel: HomeViewModel by viewModels<HomeViewModel> {
+        HomeViewModelFactory.getInstance(requireContext())
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,37 +46,39 @@ class Home : Fragment() {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
         }
-        val viewModel: HomeViewModel by viewModels<HomeViewModel> {
-            HomeViewModelFactory.getInstance(requireContext())
-        }
+
         setupAction()
-        viewModel.getStories().observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Loading -> {
-                    Log.d(TAG, "LOADING")
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.nodata.visibility = View.GONE
-                }
+        viewModel.getUser().observe(viewLifecycleOwner){
 
-                is Result.Success -> {
-                    Log.d(TAG, "SUCCESS")
-                    binding.progressBar.visibility = View.GONE
-                    binding.nodata.visibility = View.GONE
+            viewModel.getStories(it.token).observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is Result.Loading -> {
+                        Log.d(TAG, "LOADING")
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.nodata.visibility = View.GONE
+                    }
 
-                    setStories(result.data.listStory)
-                }
+                    is Result.Success -> {
+                        Log.d(TAG, "SUCCESS")
+                        binding.progressBar.visibility = View.GONE
+                        binding.nodata.visibility = View.GONE
 
-                is Result.Error -> {
-                    Log.d(TAG, "ERROR : ${result.error}")
-                    binding.progressBar.visibility = View.GONE
-                    binding.nodata.visibility = View.VISIBLE
-                }
+                        setStories(result.data.listStory)
+                    }
 
-                null -> {
+                    is Result.Error -> {
+                        Log.d(TAG, "ERROR : ${result.error}")
+                        binding.progressBar.visibility = View.GONE
+                        binding.nodata.visibility = View.VISIBLE
+                    }
+
+                    null -> {
 //                    do nothing
+                    }
                 }
             }
         }
+
         return binding.root
     }
 
@@ -92,6 +99,13 @@ class Home : Fragment() {
         binding.btnAddStory.setOnClickListener {
             view?.findNavController()?.navigate(R.id.action_homepage_to_addStory)
         }
+        viewModel.navigateToLoginPage.observe(viewLifecycleOwner){shouldNavigate->
+            if (shouldNavigate){
+
+                view?.findNavController()?.navigate(R.id.action_homepage_to_welcome)
+            }
+
+        }
     }
 
     companion object {
@@ -106,7 +120,20 @@ class Home : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_logout -> {
-                // Handle settings action
+               val builder = AlertDialog.Builder(requireContext())
+                builder
+                    .setTitle("Informasi")
+                    .setMessage("Apakah anda yakin ingin logout?")
+                    .setPositiveButton("Yakin"){dialog,_->
+                        viewModel.logout()
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Batal"){dialog,_->
+                        dialog.dismiss()
+                    }
+                    .create()
+                builder.show()
+
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -154,4 +181,5 @@ class Home : Fragment() {
         }
 
     }
+
 }

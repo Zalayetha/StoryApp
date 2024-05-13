@@ -76,6 +76,7 @@ class StoryRepository private constructor(
 
 
     fun addStoryWithAuth(
+        token:String,
         image: File,
         description: String,
         latitude: Float,
@@ -94,6 +95,7 @@ class StoryRepository private constructor(
                 requestImageFile
             )
             val response = apiService.addStories(
+                token = "bearer $token",
                 description = requestBodyDescription,
                 photo = multipartBody,
                 latitude = requestBodyLatitude,
@@ -143,13 +145,14 @@ class StoryRepository private constructor(
 
 
     fun listStories(
+        token: String,
         page: Int,
         size: Int,
         location: Int
     ): LiveData<Result<MResponseListStories>?> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getStories(page, size, location)
+            val response = apiService.getStories("bearer $token",page, size, location)
             emit(Result.Success(response))
         } catch (e: HttpException) {
             val response = e.response()?.errorBody()?.string()
@@ -160,11 +163,12 @@ class StoryRepository private constructor(
     }
 
     fun detailStory(
+        token: String,
         id: String
     ): LiveData<Result<MResponseDetailStory>?> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getDetailStory(id)
+            val response = apiService.getDetailStory("bearer $token",id)
             emit(Result.Success(response))
         } catch (e: HttpException) {
             val response = e.response()?.errorBody()?.string()
@@ -180,5 +184,9 @@ class StoryRepository private constructor(
 
     suspend fun saveUser(user: Muser) {
         pref.saveUser(user)
+    }
+
+    suspend fun clearUser(){
+        pref.clearUser()
     }
 }

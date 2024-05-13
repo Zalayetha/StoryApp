@@ -30,32 +30,35 @@ class DetailStory : Fragment() {
         val viewModel: DetailStoryViewModel by viewModels<DetailStoryViewModel> {
             DetailStoryViewModelFactory.getInstance(requireContext())
         }
-        idStory = DetailStoryArgs.fromBundle(arguments as Bundle).id ?: ""
-        viewModel.getDetailStory(idStory).observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
+        viewModel.getUser().observe(viewLifecycleOwner){
+            idStory = DetailStoryArgs.fromBundle(arguments as Bundle).id ?: ""
+            viewModel.getDetailStory(it.token,idStory).observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is Result.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
 
-                is Result.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    Glide.with(binding.root)
-                        .load(result.data.story?.photoUrl)
-                        .into(binding.ivDetailPhoto)
-                    binding.tvDetailName.text = result.data.story?.name
-                    binding.tvDetailDescription.text = result.data.story?.description
-                }
+                    is Result.Success -> {
+                        binding.progressBar.visibility = View.GONE
+                        Glide.with(binding.root)
+                            .load(result.data.story?.photoUrl)
+                            .into(binding.ivDetailPhoto)
+                        binding.tvDetailName.text = result.data.story?.name
+                        binding.tvDetailDescription.text = result.data.story?.description
+                    }
 
-                is Result.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                }
+                    is Result.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                    }
 
-                null -> {
+                    null -> {
 //                    do nothing
+                    }
                 }
-            }
 
+            }
         }
+
         return binding.root
     }
 
