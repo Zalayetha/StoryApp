@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -29,6 +31,9 @@ import com.zaghy.storyapp.network.Result
 class MapsFragment : Fragment() {
     private lateinit var mMap: GoogleMap
     private lateinit var  binding : FragmentMapsBinding
+    val viewModel : MapViewModel by viewModels<MapViewModel>{
+        MapViewModelFactory.getInstance(requireContext())
+    }
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){
         isGranted: Boolean ->
         if(isGranted){
@@ -36,7 +41,9 @@ class MapsFragment : Fragment() {
         }
     }
 
-
+    companion object{
+        private const val TAG = "MapsFragment"
+    }
 
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
@@ -47,14 +54,35 @@ class MapsFragment : Fragment() {
         googleMap.uiSettings.isMapToolbarEnabled = true
 
 
-//        val sydney = LatLng(-34.0, 151.0)
-//        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val sydney = LatLng(-34.0, 151.0)
+        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
 
         getMyLocation()
+        viewModel.getUser().observe(viewLifecycleOwner){user->
+            viewModel.getStoriesByLocation(token = user.token, location = 1).observe(viewLifecycleOwner){result->
+                when(result){
+                    is Result.Loading->{
+//                        do nothing
+                        Log.d(TAG,"Loading")
+                    }
+                    is Result.Success->{
+                        Log.d(TAG,"Success")
+                        addManyMarker(result.data.listStory)
+                    }
+                    is Result.Error->{
+                        Log.d(TAG,result.error)
+                    }
+                    else->{
+//                        do nothing
+                    }
+                }
+            }
+        }
     }
 
     private fun addManyMarker(data: List<ListStoryItem?>?) {
+
         data?.forEach { dt->
             val latLng = LatLng(dt?.lat ?: 0.0,dt?.lon ?: 0.0)
             mMap.addMarker(
@@ -114,27 +142,8 @@ class MapsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapsBinding.inflate(inflater, container, false)
-        val viewModel : MapViewModel by viewModels<MapViewModel>{
-            MapViewModelFactory.getInstance(requireContext())
-        }
-        viewModel.getUser().observe(viewLifecycleOwner){user->
-            viewModel.getStoriesByLocation(token = user.token, location = 1).observe(viewLifecycleOwner){result->
-                when(result){
-                    is Result.Loading->{
-//                        do nothing
-                    }
-                    is Result.Success->{
-                        addManyMarker(result.data.listStory)
-                    }
-                    is Result.Error->{
 
-                    }
-                    else->{
-//                        do nothing
-                    }
-                }
-            }
-        }
+
         return binding.root
     }
 

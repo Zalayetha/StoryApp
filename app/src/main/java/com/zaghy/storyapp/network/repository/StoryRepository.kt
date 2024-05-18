@@ -193,7 +193,7 @@ class StoryRepository private constructor(
     fun getListStoriesByLocation(token:String,location: Int):LiveData<Result<MResponseListStories>> = liveData {
         emit(Result.Loading)
         try{
-            val response = apiService.getStoriesWithLocation(token = token, location = location)
+            val response = apiService.getStoriesWithLocation(token = "bearer $token", location = location)
             emit(Result.Success(response))
         }catch (e:HttpException){
             val response = e.response()?.errorBody()?.string()
