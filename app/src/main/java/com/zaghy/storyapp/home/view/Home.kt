@@ -136,6 +136,10 @@ class Home : Fragment() {
 
                 true
             }
+            R.id.action_map->{
+                view?.findNavController()?.navigate(R.id.action_homepage_to_mapsFragment)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

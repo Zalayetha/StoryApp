@@ -189,4 +189,17 @@ class StoryRepository private constructor(
     suspend fun clearUser(){
         pref.clearUser()
     }
+
+    fun getListStoriesByLocation(token:String,location: Int):LiveData<Result<MResponseListStories>> = liveData {
+        emit(Result.Loading)
+        try{
+            val response = apiService.getStoriesWithLocation(token = token, location = location)
+            emit(Result.Success(response))
+        }catch (e:HttpException){
+            val response = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
+            val errorMessage = errorBody.message
+            emit(Result.Error(errorMessage.toString()))
+        }
+    }
 }

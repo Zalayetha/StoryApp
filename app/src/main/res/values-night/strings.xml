@@ -12,4 +12,9 @@
     <string name="empty">Empty</string>
     <string name="logout">Logout</string>
     <string name="add_story">Add Story</string>
+    <string name="map">Map</string>
+    <string name="normal">Normal</string>
+    <string name="satellite">Satellite</string>
+    <string name="terrain">Terrain</string>
+    <string name="hybrid">Hybrid</string>
 </resources>

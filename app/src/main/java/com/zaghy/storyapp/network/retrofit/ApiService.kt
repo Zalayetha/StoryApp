@@ -73,5 +73,9 @@ interface ApiService {
         @Path("id") id: String
     ): MResponseDetailStory
 
-
+    @GET("stories")
+    suspend fun getStoriesWithLocation(
+        @Header("Authorization") token: String,
+        @Query("location") location : Int = 1,
+    ): MResponseListStories
 }
