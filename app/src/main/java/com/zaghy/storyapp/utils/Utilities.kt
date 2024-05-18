@@ -2,15 +2,24 @@ package com.zaghy.storyapp.utils
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.core.content.FileProvider
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.zaghy.storyapp.BuildConfig
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -109,4 +118,8 @@ private fun rotateImage(source: Bitmap, angle: Float): Bitmap {
     return Bitmap.createBitmap(
         source, 0, 0, source.width, source.height, matrix, true
     )
+}
+
+fun bitmapToBitmapDescriptor(bitmap:Bitmap): BitmapDescriptor {
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
 }
