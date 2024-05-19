@@ -5,12 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.zaghy.storyapp.home.model.ListStoryItem
+import com.zaghy.storyapp.home.model.MResponseListStories
 import com.zaghy.storyapp.network.repository.StoryRepository
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val storyRepository: StoryRepository) : ViewModel() {
     private val _navigateToLoginPage = MutableLiveData<Boolean>()
     val navigateToLoginPage:LiveData<Boolean> get() = _navigateToLoginPage
+
+
     companion object{
         private const val TAG = "HomeViewModel"
     }
@@ -19,10 +25,10 @@ class HomeViewModel(private val storyRepository: StoryRepository) : ViewModel() 
     }
     fun getStories(token:String) = storyRepository.listStories(
         token = token,
-        page = 1,
-        size = 20,
-        location = 0
-    )
+    ).cachedIn(viewModelScope)
+
+
+
 
     fun logout(){
         viewModelScope.launch {
@@ -37,4 +43,7 @@ class HomeViewModel(private val storyRepository: StoryRepository) : ViewModel() 
     }
 
     fun getUser() = storyRepository.getUser()
+
+
+
 }
