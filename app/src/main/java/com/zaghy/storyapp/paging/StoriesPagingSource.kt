@@ -25,7 +25,6 @@ class StoriesPagingSource(private val apiService: ApiService,private val token:S
             val responseData = apiService.getStories(token=token, page = position, size = params.loadSize)
             val stories = responseData.listStory ?: emptyList()
             val nonNullStories = stories.filterNotNull()
-            Log.d(TAG, "load: ${nonNullStories.size}")
             LoadResult.Page(
                 data = nonNullStories ,
                 prevKey = if (position == INITIAL_PAGE_INDEX) null else position - 1,

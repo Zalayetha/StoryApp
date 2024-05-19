@@ -26,12 +26,10 @@ class LoadingStateAdapter(private val retry: () -> Unit) :
     class LoadingStateViewHolder(private val binding: ItemLoadingBinding, retry: () -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            Log.d("LoadingStateAdapter", "init")
             binding.retryButton.setOnClickListener { retry.invoke() }
         }
 
         fun bind(loadState: LoadState) {
-            Log.d("LoadState",loadState.toString())
             if (loadState is LoadState.Error) {
                 binding.errorMsg.text = loadState.error.localizedMessage
             }

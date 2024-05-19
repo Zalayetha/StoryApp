@@ -3,6 +3,7 @@ package com.zaghy.storyapp.network.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -17,9 +18,11 @@ import com.zaghy.storyapp.home.model.ListStoryItem
 import com.zaghy.storyapp.home.model.MResponseListStories
 import com.zaghy.storyapp.local.datastore.Muser
 import com.zaghy.storyapp.local.datastore.PreferencesDataStore
+import com.zaghy.storyapp.local.room.StoriesDatabase
 import com.zaghy.storyapp.network.Result
 import com.zaghy.storyapp.network.retrofit.ApiService
 import com.zaghy.storyapp.paging.StoriesPagingSource
+import com.zaghy.storyapp.paging.StoriesRemoteMediator
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -28,6 +31,7 @@ import retrofit2.HttpException
 import java.io.File
 
 class StoryRepository private constructor(
+    private val database :StoriesDatabase,
     private val apiService: ApiService,
     private val pref: PreferencesDataStore
 ) {
@@ -36,9 +40,10 @@ class StoryRepository private constructor(
         private var instance: StoryRepository? = null
         fun getInstance(
             apiService: ApiService,
-            pref: PreferencesDataStore
+            pref: PreferencesDataStore,
+            database:StoriesDatabase
         ): StoryRepository = instance ?: synchronized(this) {
-            instance ?: StoryRepository(apiService, pref).also {
+            instance ?: StoryRepository(database,apiService, pref).also {
                 instance = it
             }
         }
@@ -152,12 +157,15 @@ class StoryRepository private constructor(
     fun listStories(
         token:String,
     ) : LiveData<PagingData<ListStoryItem>>{
+        @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
                 pageSize = 5
             ),
+//            remoteMediator = StoriesRemoteMediator(apiService,database, token = token),
             pagingSourceFactory = {
                 StoriesPagingSource(apiService = apiService, token = "bearer $token")
+//                database.storiesDao().getAllStories()
             }
         ).liveData
     }

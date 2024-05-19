@@ -36,7 +36,7 @@ class HomeViewModel(private val storyRepository: StoryRepository) : ViewModel() 
                 storyRepository.clearUser()
                 _navigateToLoginPage.postValue(true)
             }catch(e:Exception){
-                Log.d(TAG, "logout: ${e.message.toString()}")
+//                Log.d(TAG, "logout: ${e.message.toString()}")
             }
 
         }
