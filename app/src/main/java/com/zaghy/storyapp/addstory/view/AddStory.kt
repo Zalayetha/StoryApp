@@ -1,5 +1,8 @@
 package com.zaghy.storyapp.addstory.view
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +12,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+
 import com.zaghy.storyapp.R
 import com.zaghy.storyapp.addstory.viewmodel.AddStoryViewModel
 import com.zaghy.storyapp.addstory.viewmodel.AddStoryViewModelFactory
@@ -24,6 +31,9 @@ import com.zaghy.storyapp.utils.uriToFile
 class AddStory : Fragment() {
     private lateinit var binding: FragmentAddStoryBinding
     private var currentImageUri: Uri? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var myLatitude:Float = 0.toFloat()
+    private var myLongitude:Float = 0.toFloat()
 
     //    launcher gallery
     private val launcherGallery = registerForActivityResult(
@@ -45,6 +55,61 @@ class AddStory : Fragment() {
     ) { isSuccess ->
         if (isSuccess) {
             showImage()
+        }
+    }
+
+//    launcher permission
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Precise location access granted.
+                    getMyLastLocation()
+                }
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Only approximate location access granted.
+                    getMyLastLocation()
+                }
+                else -> {
+                    // No location access granted.
+                }
+            }
+        }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun getMyLastLocation() {
+        if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ){
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    Log.d(TAG,"getMyLastLocation: ${location.latitude}, ${location.longitude}")
+                    myLatitude = location.latitude.toFloat()
+                    myLongitude = location.longitude.toFloat()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Location is not found. Try Again",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
         }
     }
 
@@ -76,7 +141,7 @@ class AddStory : Fragment() {
         val viewModel: AddStoryViewModel by viewModels<AddStoryViewModel> {
             AddStoryViewModelFactory.getInstance(requireContext())
         }
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         setupAction(viewModel)
         return binding.root
     }
@@ -90,8 +155,16 @@ class AddStory : Fragment() {
         }
         binding.buttonAdd.setOnClickListener {
             Log.d(TAG, "setupAction: ")
-            uploadImage(viewModel)
+            uploadImage(viewModel,latitude = myLatitude,longitude = myLongitude)
         }
+       binding.myLocSwitch.setOnCheckedChangeListener { _, isChecked ->
+           if(isChecked){
+               getMyLastLocation()
+           }else{
+               myLatitude = 0.toFloat()
+               myLongitude = 0.toFloat()
+           }
+       }
     }
 
     private fun showImage() {
@@ -100,13 +173,11 @@ class AddStory : Fragment() {
         }
     }
 
-    private fun uploadImage(viewModel: AddStoryViewModel) {
+    private fun uploadImage(viewModel: AddStoryViewModel,latitude:Float = 0.toFloat(),longitude:Float = 0.toFloat()) {
         currentImageUri?.let {
             Log.d(TAG, "uploadImage: ")
             val imageFile = uriToFile(it, requireContext()).reduceFileImage()
             val description = binding.edAddDescription.text.toString()
-            val latitude = 0.toFloat()
-            val longitude = 0.toFloat()
             viewModel.getUser().observe(viewLifecycleOwner) {
 
                 viewModel.addStory(it.token, imageFile, description, latitude, longitude)

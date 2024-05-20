@@ -77,4 +77,5 @@ dependencies {
     implementation(libs.androidx.room.paging)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.play.services.location.v1800)
 }

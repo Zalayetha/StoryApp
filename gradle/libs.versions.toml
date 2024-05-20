@@ -19,9 +19,10 @@ constraintlayout = "2.1.4"
 mockitoCore = "3.12.4"
 navigationFragmentKtx = "2.7.7"
 pagingRuntimeKtx = "3.3.0"
+playServicesLocation = "18.0.0"
 retrofit = "2.9.0"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
-playServicesMaps = "18.1.0"
+playServicesMaps = "18.0.0"
 roomPaging = "2.6.1"
 roomKtx = "2.6.1"
 
@@ -51,6 +52,8 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoCore" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesMaps" }
+play-services-location-v1800 = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
