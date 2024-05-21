@@ -58,13 +58,7 @@ class Home : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.title = "Story App"
 
         setupAction()
-        viewModel.getUser().observe(viewLifecycleOwner) {
-            Log.d(TAG,"Masuk ${it.token}")
-            viewModel.getStories(it.token).observe(viewLifecycleOwner) { pagingData ->
-                Log.d(TAG,"masuk paging data ${pagingData}")
-                setStories(pagingData)
-            }
-        }
+        setStories()
     }
 
 
@@ -120,7 +114,7 @@ class Home : Fragment() {
         }
     }
 
-    private fun setStories(pagingData: PagingData<ListStoryItem>) {
+    private fun setStories() {
         binding.storyRv.apply {
 //            setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
@@ -131,13 +125,15 @@ class Home : Fragment() {
                     oldItem: ListStoryItem,
                     newItem: ListStoryItem
                 ): Boolean {
-                    return oldItem == newItem
+                    Log.d(TAG,(oldItem.id == newItem.id).toString());
+                    return oldItem.id == newItem.id
                 }
 
                 override fun areContentsTheSame(
                     oldItem: ListStoryItem,
                     newItem: ListStoryItem
                 ): Boolean {
+                    Log.d(TAG,(oldItem == newItem).toString());
                     return oldItem == newItem
                 }
 
@@ -155,14 +151,19 @@ class Home : Fragment() {
             }
 
         )
-
+        viewModel.getUser().observe(viewLifecycleOwner) {
+            Log.d(TAG,"Masuk ${it.token}")
+            viewModel.getStories(it.token).observe(viewLifecycleOwner) { pagingData ->
+                Log.d(TAG,"masuk paging data ${pagingData}")
+                adapter.submitData(lifecycle, pagingData)
+            }
+        }
 
         binding.storyRv.adapter = adapter.withLoadStateFooter(
             footer = LoadingStateAdapter {
                 adapter.retry()
             }
         )
-        adapter.submitData(lifecycle, pagingData)
-    }
 
+    }
 }

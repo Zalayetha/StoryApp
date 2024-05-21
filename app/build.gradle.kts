@@ -80,4 +80,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.play.services.location.v1800)
     debugImplementation(libs.androidx.fragment.testing)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.okhttp3.okhttp.tls)
+    implementation(libs.androidx.espresso.idling.resource)
 }

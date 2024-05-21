@@ -81,7 +81,7 @@ class StoriesRemoteMediator(
                 val nonNullStories = stories.filterNotNull()
                 storiesDatabase.storiesDao().insertStories(nonNullStories)
             }
-            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached ?: true)
+            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached!!)
         } catch (exception: Exception) {
             return MediatorResult.Error(exception)
         }

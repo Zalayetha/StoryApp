@@ -22,6 +22,7 @@ import com.zaghy.storyapp.local.room.StoriesDatabase
 import com.zaghy.storyapp.network.Result
 import com.zaghy.storyapp.network.retrofit.ApiService
 import com.zaghy.storyapp.paging.StoriesRemoteMediator
+import com.zaghy.storyapp.utils.wrapEspressoIdlingResource
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -30,7 +31,7 @@ import retrofit2.HttpException
 import java.io.File
 
 class StoryRepository private constructor(
-    private val database :StoriesDatabase,
+    private val database: StoriesDatabase,
     private val apiService: ApiService,
     private val pref: PreferencesDataStore
 ) {
@@ -40,9 +41,9 @@ class StoryRepository private constructor(
         fun getInstance(
             apiService: ApiService,
             pref: PreferencesDataStore,
-            database:StoriesDatabase
+            database: StoriesDatabase
         ): StoryRepository = instance ?: synchronized(this) {
-            instance ?: StoryRepository(database,apiService, pref).also {
+            instance ?: StoryRepository(database, apiService, pref).also {
                 instance = it
             }
         }
@@ -52,16 +53,19 @@ class StoryRepository private constructor(
 
     fun login(email: String, password: String): LiveData<Result<MResponseLogin>?> = liveData {
         emit(Result.Loading)
-        try {
-            val response = apiService.login(email, password)
-            emit(Result.Success(response))
+        wrapEspressoIdlingResource {
+            try {
+                val response = apiService.login(email, password)
+                emit(Result.Success(response))
 
-        } catch (e: HttpException) {
-            val response = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
-            val errorMessage = errorBody.message
-            emit(Result.Error(errorMessage.toString()))
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorBody = Gson().fromJson(response, ErrorResponse::class.java)
+                val errorMessage = errorBody.message
+                emit(Result.Error(errorMessage.toString()))
+            }
         }
+
     }
 
     fun register(
@@ -71,53 +75,60 @@ class StoryRepository private constructor(
     ): LiveData<Result<MResponseRegister>?> =
         liveData {
             emit(Result.Loading)
-            try {
-                val response = apiService.register(name, email, password)
+            wrapEspressoIdlingResource {
+                try {
+                    val response = apiService.register(name, email, password)
 
-                emit(Result.Success(response))
-            } catch (e: HttpException) {
-                val response = e.response()?.errorBody()?.string()
-                val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
-                val errorMessage = errorBody.message
-                emit(Result.Error(errorMessage.toString()))
+                    emit(Result.Success(response))
+                } catch (e: HttpException) {
+                    val response = e.response()?.errorBody()?.string()
+                    val errorBody = Gson().fromJson(response, ErrorResponse::class.java)
+                    val errorMessage = errorBody.message
+                    emit(Result.Error(errorMessage.toString()))
 
+                }
             }
+
         }
 
 
     fun addStoryWithAuth(
-        token:String,
+        token: String,
         image: File,
         description: String,
         latitude: Float,
         longitude: Float
     ): LiveData<Result<MResponseAddStory>?> = liveData {
         emit(Result.Loading)
-        try {
-            val requestBodyDescription = description.toRequestBody("text/plain".toMediaType())
-            val requestBodyLatitude = latitude.toString().toRequestBody("text/plain".toMediaType())
-            val requestBodyLongitude =
-                longitude.toString().toRequestBody("text/plain".toMediaType())
-            val requestImageFile = image.asRequestBody("image/jpeg".toMediaType())
-            val multipartBody: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "photo",
-                image.name,
-                requestImageFile
-            )
-            val response = apiService.addStories(
-                token = "bearer $token",
-                description = requestBodyDescription,
-                photo = multipartBody,
-                latitude = requestBodyLatitude,
-                longitude = requestBodyLongitude
-            )
-            emit(Result.Success(response))
-        } catch (e: HttpException) {
-            val response = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
-            val errorMessage = errorBody.message
-            emit(Result.Error(errorMessage.toString()))
+        wrapEspressoIdlingResource {
+            try {
+                val requestBodyDescription = description.toRequestBody("text/plain".toMediaType())
+                val requestBodyLatitude =
+                    latitude.toString().toRequestBody("text/plain".toMediaType())
+                val requestBodyLongitude =
+                    longitude.toString().toRequestBody("text/plain".toMediaType())
+                val requestImageFile = image.asRequestBody("image/jpeg".toMediaType())
+                val multipartBody: MultipartBody.Part = MultipartBody.Part.createFormData(
+                    "photo",
+                    image.name,
+                    requestImageFile
+                )
+                val response = apiService.addStories(
+                    token = "bearer $token",
+                    description = requestBodyDescription,
+                    photo = multipartBody,
+                    latitude = requestBodyLatitude,
+                    longitude = requestBodyLongitude
+                )
+                emit(Result.Success(response))
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorBody = Gson().fromJson(response, ErrorResponse::class.java)
+                val errorMessage = errorBody.message
+                emit(Result.Error(errorMessage.toString()))
+            }
         }
+
     }
 
     fun addStoryGuest(
@@ -127,41 +138,45 @@ class StoryRepository private constructor(
         longitude: Float
     ): LiveData<Result<MResponseAddStory>?> = liveData {
         emit(Result.Loading)
-        try {
-            val requestBodyDescription = description.toRequestBody("text/plain".toMediaType())
-            val requestBodyLatitude = latitude.toString().toRequestBody("text/plain".toMediaType())
-            val requestBodyLongitude =
-                longitude.toString().toRequestBody("text/plain".toMediaType())
-            val requestImageFile = image.asRequestBody("image/jpeg".toMediaType())
-            val multipartBody: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "photo",
-                image.name,
-                requestImageFile
-            )
-            val response = apiService.addStoriesGuest(
-                description = requestBodyDescription,
-                photo = multipartBody,
-                latitude = requestBodyLatitude,
-                longitude = requestBodyLongitude
-            )
-            emit(Result.Success(response))
-        } catch (e: HttpException) {
-            val response = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
-            val errorMessage = errorBody.message
-            emit(Result.Error(errorMessage.toString()))
+        wrapEspressoIdlingResource {
+            try {
+                val requestBodyDescription = description.toRequestBody("text/plain".toMediaType())
+                val requestBodyLatitude =
+                    latitude.toString().toRequestBody("text/plain".toMediaType())
+                val requestBodyLongitude =
+                    longitude.toString().toRequestBody("text/plain".toMediaType())
+                val requestImageFile = image.asRequestBody("image/jpeg".toMediaType())
+                val multipartBody: MultipartBody.Part = MultipartBody.Part.createFormData(
+                    "photo",
+                    image.name,
+                    requestImageFile
+                )
+                val response = apiService.addStoriesGuest(
+                    description = requestBodyDescription,
+                    photo = multipartBody,
+                    latitude = requestBodyLatitude,
+                    longitude = requestBodyLongitude
+                )
+                emit(Result.Success(response))
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorBody = Gson().fromJson(response, ErrorResponse::class.java)
+                val errorMessage = errorBody.message
+                emit(Result.Error(errorMessage.toString()))
+            }
         }
+
     }
 
     fun listStories(
-        token:String,
-    ) : LiveData<PagingData<ListStoryItem>>{
+        token: String,
+    ): LiveData<PagingData<ListStoryItem>> {
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
-                pageSize = 5
+                pageSize = 15
             ),
-            remoteMediator = StoriesRemoteMediator(apiService,database, token = token),
+            remoteMediator = StoriesRemoteMediator(apiService, database, token = token),
             pagingSourceFactory = {
 //                StoriesPagingSource(apiService = apiService, token = "bearer $token")
                 database.storiesDao().getAllStories()
@@ -174,15 +189,18 @@ class StoryRepository private constructor(
         id: String
     ): LiveData<Result<MResponseDetailStory>?> = liveData {
         emit(Result.Loading)
-        try {
-            val response = apiService.getDetailStory("bearer $token",id)
-            emit(Result.Success(response))
-        } catch (e: HttpException) {
-            val response = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
-            val errorMessage = errorBody.message
-            emit(Result.Error(errorMessage.toString()))
+        wrapEspressoIdlingResource {
+            try {
+                val response = apiService.getDetailStory("bearer $token", id)
+                emit(Result.Success(response))
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorBody = Gson().fromJson(response, ErrorResponse::class.java)
+                val errorMessage = errorBody.message
+                emit(Result.Error(errorMessage.toString()))
+            }
         }
+
     }
 
     fun getUser(): LiveData<Muser> {
@@ -193,20 +211,27 @@ class StoryRepository private constructor(
         pref.saveUser(user)
     }
 
-    suspend fun clearUser(){
+    suspend fun clearUser() {
         pref.clearUser()
     }
 
-    fun getListStoriesByLocation(token:String,location: Int):LiveData<Result<MResponseListStories>> = liveData {
+    fun getListStoriesByLocation(
+        token: String,
+        location: Int
+    ): LiveData<Result<MResponseListStories>> = liveData {
         emit(Result.Loading)
-        try{
-            val response = apiService.getStoriesWithLocation(token = "bearer $token", location = location)
-            emit(Result.Success(response))
-        }catch (e:HttpException){
-            val response = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(response,ErrorResponse::class.java)
-            val errorMessage = errorBody.message
-            emit(Result.Error(errorMessage.toString()))
+        wrapEspressoIdlingResource {
+            try {
+                val response =
+                    apiService.getStoriesWithLocation(token = "bearer $token", location = location)
+                emit(Result.Success(response))
+            } catch (e: HttpException) {
+                val response = e.response()?.errorBody()?.string()
+                val errorBody = Gson().fromJson(response, ErrorResponse::class.java)
+                val errorMessage = errorBody.message
+                emit(Result.Error(errorMessage.toString()))
+            }
         }
+
     }
 }
