@@ -6,8 +6,6 @@ import com.zaghy.storyapp.local.datastore.dataStore
 import com.zaghy.storyapp.local.room.StoriesDatabase
 import com.zaghy.storyapp.network.repository.StoryRepository
 import com.zaghy.storyapp.network.retrofit.ApiConfig
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 object Injection {
     fun provideRepository(context: Context): StoryRepository {

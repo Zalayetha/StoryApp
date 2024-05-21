@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.zaghy.storyapp.di.Injection
-import com.zaghy.storyapp.home.viewmodel.HomeViewModel
-import com.zaghy.storyapp.home.viewmodel.HomeViewModelFactory
 import com.zaghy.storyapp.network.repository.StoryRepository
 
 class MapViewModelFactory(private val storyRepository: StoryRepository):ViewModelProvider.NewInstanceFactory() {

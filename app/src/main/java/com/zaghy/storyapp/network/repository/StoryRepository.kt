@@ -21,7 +21,6 @@ import com.zaghy.storyapp.local.datastore.PreferencesDataStore
 import com.zaghy.storyapp.local.room.StoriesDatabase
 import com.zaghy.storyapp.network.Result
 import com.zaghy.storyapp.network.retrofit.ApiService
-import com.zaghy.storyapp.paging.StoriesPagingSource
 import com.zaghy.storyapp.paging.StoriesRemoteMediator
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -162,10 +161,10 @@ class StoryRepository private constructor(
             config = PagingConfig(
                 pageSize = 5
             ),
-//            remoteMediator = StoriesRemoteMediator(apiService,database, token = token),
+            remoteMediator = StoriesRemoteMediator(apiService,database, token = token),
             pagingSourceFactory = {
-                StoriesPagingSource(apiService = apiService, token = "bearer $token")
-//                database.storiesDao().getAllStories()
+//                StoriesPagingSource(apiService = apiService, token = "bearer $token")
+                database.storiesDao().getAllStories()
             }
         ).liveData
     }

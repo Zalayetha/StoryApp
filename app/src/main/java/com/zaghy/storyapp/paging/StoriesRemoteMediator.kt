@@ -1,11 +1,11 @@
 package com.zaghy.storyapp.paging
 
 import android.util.Log
-import androidx.room.withTransaction
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import androidx.room.withTransaction
 import com.zaghy.storyapp.home.model.ListStoryItem
 import com.zaghy.storyapp.local.room.RemoteKeys
 import com.zaghy.storyapp.local.room.StoriesDatabase
@@ -68,16 +68,16 @@ class StoriesRemoteMediator(
                     storiesDatabase.storiesDao().deleteAll()
                 }
                 val prevKey = if (page == 1) null else page - 1
-                val nextKey = if (endOfPaginationReached != false) null else page + 1
-                val key = responseData.listStory?.map {
+                val nextKey = if (endOfPaginationReached!!) null else page + 1
+                val key = responseData.listStory.map {
                     it?.let { it1 -> RemoteKeys(id = it1.id, prevKey = prevKey, nextKey = nextKey) }
                 }
-                val keys = key ?: emptyList()
+                val keys = key
                 val nonNullKeys = keys.filterNotNull()
                 storiesDatabase.remoteKeysDao().insertAll(nonNullKeys)
 
 
-                val stories = responseData.listStory ?: emptyList()
+                val stories = responseData.listStory
                 val nonNullStories = stories.filterNotNull()
                 storiesDatabase.storiesDao().insertStories(nonNullStories)
             }
