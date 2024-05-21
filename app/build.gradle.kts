@@ -45,6 +45,7 @@ android {
     @Suppress("UnstableApiUsage")
     testOptions{
         unitTests.isReturnDefaultValues = true
+        animationsDisabled = true
     }
 }
 
@@ -78,4 +79,5 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.play.services.location.v1800)
+    debugImplementation(libs.androidx.fragment.testing)
 }
